@@ -1,0 +1,40 @@
+services:
+  auth_db:
+    restart: always
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: is067
+      POSTGRES_PASSWORD: isThePass67
+    ports:
+      - 5433:5432
+
+  auth:
+    restart: always
+    build:
+      context: ./auth
+    ports:
+      - 8080:8080
+    depends_on:
+      - auth_db
+
+  news_db:
+    restart: always
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: news_db
+      POSTGRES_USER: is067
+      POSTGRES_PASSWORD: isThePass67
+    ports:
+      - 5434:5432
+
+  news:
+    restart: always
+    build:
+      context: ./news
+    ports:
+      - 8081:8081
+    depends_on:
+      - news_db
+    
+    
