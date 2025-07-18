@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import com.app.news.news.client.AuthClient;
 import com.app.news.news.database.entity.News;
 import com.app.news.news.dto.NewsReadDto;
-import com.app.news.news.dto.UserReadDto;
 
 import lombok.RequiredArgsConstructor;
 

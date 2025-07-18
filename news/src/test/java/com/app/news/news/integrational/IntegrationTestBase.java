@@ -1,4 +1,4 @@
-package com.app.news;
+package com.app.news.news.integrational;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -9,30 +9,29 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-public class ContainerConnection {
+public abstract class IntegrationTestBase {
 
     @Container
-	public static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:latest")
-			.withDatabaseName("testdb")
-            .withUsername("test")
-            .withPassword("test");
+    private static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgresql:latest")
+        .withDatabaseName("test_db")
+        .withUsername("test")
+        .withPassword("test");
 
-	@BeforeAll
-    public static void startContainers() {
+    @AfterAll
+    public static void start() {
         container.start();
     }
-	
-	@AfterAll
-	public static void beforeAll() {
-		container.stop();
-		container.close();
-	}
 
-	@DynamicPropertySource
-	public static void configurationProperties(DynamicPropertyRegistry registry) {
+    @BeforeAll
+    public static void stop() {
+        container.close();
+    }
+
+    @DynamicPropertySource
+    public void configuration(DynamicPropertyRegistry registry) {
 		registry.add("spring.datasource.url", container::getJdbcUrl);
 		registry.add("spring.datasource.username", container::getUsername);
 		registry.add("spring.datasource.password", container::getPassword);
 	}
-    
+
 }

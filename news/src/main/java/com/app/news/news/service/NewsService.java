@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.app.news.news.database.repository.NewsRepository;
 import com.app.news.news.dto.NewsCreateDto;
+import com.app.news.news.dto.NewsPutDto;
 import com.app.news.news.dto.NewsReadDto;
 import com.app.news.news.mapper.NewsCreateMapper;
+import com.app.news.news.mapper.NewsPutMapper;
 import com.app.news.news.mapper.NewsReadMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class NewsService {
     private final NewsRepository newsRepository;
     private final NewsReadMapper newsReadMapper;
     private final NewsCreateMapper newsCreateMapper;
+    private final NewsPutMapper newsPutMapper;
 
     public List<NewsReadDto> findAll() {
         return newsRepository.findAll().stream()
@@ -42,6 +45,15 @@ public class NewsService {
             .map(newsCreateMapper::map)
             .map(newsRepository::save)
             .map(newsReadMapper::map)
+            .get();
+    }
+
+    @Transactional
+    public NewsReadDto put(NewsPutDto newsPutDto, Long id) {
+        return newsRepository.findById(id)
+            .map(news -> newsPutMapper.mapCopy(newsPutDto, news))
+            .map(newsRepository::saveAndFlush)
+            .map(updateNews -> newsReadMapper.map(updateNews))
             .get();
     }
 

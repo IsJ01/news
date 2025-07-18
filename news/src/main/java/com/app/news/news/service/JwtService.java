@@ -32,6 +32,7 @@ public class JwtService {
 
     public List<GrantedAuthority> extracAuthorities(String token) {
         Claims claims = extractAllClaims(token);
+        @SuppressWarnings("unchecked")
         List<GrantedAuthority> authorities = (ArrayList<GrantedAuthority>) claims.get("authorities");
         return authorities;
     }

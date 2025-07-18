@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.news.news.client.AuthClient;
 import com.app.news.news.dto.NewsCreateDto;
+import com.app.news.news.dto.NewsPutDto;
 import com.app.news.news.dto.NewsReadDto;
 import com.app.news.news.dto.UserReadDto;
 import com.app.news.news.service.NewsService;
@@ -20,11 +21,14 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 @RestController
@@ -51,6 +55,21 @@ public class NewsRestController {
             return status(403).build();
         }
         return ok(newsService.create(dto));
+    }
+
+    @PutMapping("api/v1/{id}")
+    public ResponseEntity<?> put(
+        @RequestBody @Validated NewsPutDto newsPutDto, 
+        @PathVariable Long id, 
+        @AuthenticationPrincipal UserDetails userDetails) {
+        
+        NewsReadDto news = newsService.findById(id);
+
+        if (!news.getUser().getUsername().equals(userDetails.getUsername())) {
+            return status(403).build();
+        }
+
+        return status(204).body(newsService.put(newsPutDto, id));
     }
 
     @DeleteMapping("api/v1/news/{id}")
