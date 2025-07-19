@@ -15,16 +15,16 @@ import lombok.RequiredArgsConstructor;
 public class AuthClient {
     
     @Value("${rest.client.auth-server}")
-    private String auth_server;
+    private String authServer;
 
     private final RestTemplate restTemplate;
 
     public UserReadDto fetchUserById(Long id) {
         ResponseEntity<UserReadDto> responseEntity = restTemplate.getForEntity(
-            String.format("%s/api/v1/public/users/%s", auth_server, id),
+            String.format("%s/api/v1/public/users/%s", authServer, id),
             UserReadDto.class
         );
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+        if (responseEntity.getStatusCode().equals(HttpStatus.OK)) {
             return responseEntity.getBody();
         } else {
             return null;

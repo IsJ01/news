@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.noContent;
-import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.http.ResponseEntity.status;
 
 import java.util.List;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
-
 
 
 @RestController
@@ -51,20 +49,19 @@ public class NewsRestController {
     @PostMapping("api/v1/news")
     public ResponseEntity<?> create(@RequestBody NewsCreateDto dto, @AuthenticationPrincipal UserDetails userDetails) {
         UserReadDto userDto = authClient.fetchUserById(dto.getUserId());
-        if (!userDto.getId().equals(dto.getUserId())) {
+        if (!userDto.getUsername().equals(userDetails.getUsername())) {
             return status(403).build();
         }
-        return ok(newsService.create(dto));
+        return status(201).body(newsService.create(dto));
     }
 
-    @PutMapping("api/v1/{id}")
+    @PutMapping("api/v1/news/{id}")
     public ResponseEntity<?> put(
         @RequestBody @Validated NewsPutDto newsPutDto, 
         @PathVariable Long id, 
         @AuthenticationPrincipal UserDetails userDetails) {
         
         NewsReadDto news = newsService.findById(id);
-
         if (!news.getUser().getUsername().equals(userDetails.getUsername())) {
             return status(403).build();
         }

@@ -12,23 +12,23 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public abstract class IntegrationTestBase {
 
     @Container
-    private static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgresql:latest")
+    private static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:latest")
         .withDatabaseName("test_db")
         .withUsername("test")
         .withPassword("test");
 
-    @AfterAll
+    @BeforeAll
     public static void start() {
         container.start();
     }
 
-    @BeforeAll
+    @AfterAll
     public static void stop() {
         container.close();
     }
 
     @DynamicPropertySource
-    public void configuration(DynamicPropertyRegistry registry) {
+    public static void configuration(DynamicPropertyRegistry registry) {
 		registry.add("spring.datasource.url", container::getJdbcUrl);
 		registry.add("spring.datasource.username", container::getUsername);
 		registry.add("spring.datasource.password", container::getPassword);

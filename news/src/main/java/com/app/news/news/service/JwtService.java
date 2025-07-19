@@ -30,7 +30,7 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    public List<GrantedAuthority> extracAuthorities(String token) {
+    public List<GrantedAuthority> extractAuthorities(String token) {
         Claims claims = extractAllClaims(token);
         @SuppressWarnings("unchecked")
         List<GrantedAuthority> authorities = (ArrayList<GrantedAuthority>) claims.get("authorities");
